@@ -1,13 +1,12 @@
 
 import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Plus, RussianRuble } from 'lucide-react';
 import { Venta, EstadoVenta } from '@/types';
 import { cn } from '@/lib/utils';
 
 import { VentasResumenCards } from '@/components/ventas/VentasResumenCards';
 import { VentasFilterBar } from '@/components/ventas/VentasFilterBar';
 import { VentasTable } from '@/components/ventas/VentasTable';
+import { NuevaVentaModal } from '@/components/ventas/NuevaVentaModal'; // Nuevo import
 
 // Ventas de ejemplo
 const ventasDemoData: Venta[] = [
@@ -19,10 +18,10 @@ const ventasDemoData: Venta[] = [
     estado: 'realizado',
     cliente: { 
       id: '1', 
-      nombre_completo: 'María García Pérez',
-      celular: '999-888-777',
+      nombre_completo: 'María Quispe Mamani',
+      celular: '71234567',
       correo: 'maria@example.com',
-      direccion: 'Av. Principal 123',
+      direccion: 'Av. 16 de Julio #123',
       departamento: 'La Paz',
       provincia: 'Murillo',
       notas: 'Cliente habitual'
@@ -36,12 +35,12 @@ const ventasDemoData: Venta[] = [
     estado: 'espera',
     cliente: {
       id: '2',
-      nombre_completo: 'Juan Rodríguez Sánchez',
-      celular: '888-777-666',
+      nombre_completo: 'Juan Condori Huanca',
+      celular: '73456789',
       correo: 'juan@example.com',
-      direccion: 'Calle Secundaria 456',
-      departamento: 'Arequipa',
-      provincia: 'Arequipa',
+      direccion: 'Calle Sagárnaga #456',
+      departamento: 'Cochabamba',
+      provincia: 'Cercado',
       notas: null
     }
   },
@@ -53,12 +52,12 @@ const ventasDemoData: Venta[] = [
     estado: 'espera',
     cliente: {
       id: '3',
-      nombre_completo: 'Ana López Martínez',
-      celular: '777-666-555',
+      nombre_completo: 'Ana Flores Choque',
+      celular: '65432198',
       correo: 'ana@example.com',
-      direccion: 'Av. Central 789',
-      departamento: 'Cusco',
-      provincia: 'Cusco',
+      direccion: 'Av. América #789',
+      departamento: 'Santa Cruz',
+      provincia: 'Andrés Ibáñez',
       notas: 'Prefiere entregas por la tarde'
     }
   },
@@ -70,12 +69,12 @@ const ventasDemoData: Venta[] = [
     estado: 'reserva',
     cliente: {
       id: '4',
-      nombre_completo: 'Pedro González Díaz',
-      celular: '666-555-444',
+      nombre_completo: 'Pedro Torrico Ledezma',
+      celular: '76543219',
       correo: 'pedro@example.com',
-      direccion: 'Jr. Lateral 101',
-      departamento: 'Trujillo',
-      provincia: 'La Libertad',
+      direccion: 'Calle Sucre #101',
+      departamento: 'Tarija',
+      provincia: 'Cercado',
       notas: null
     }
   },
@@ -87,12 +86,12 @@ const ventasDemoData: Venta[] = [
     estado: 'realizado',
     cliente: {
       id: '5',
-      nombre_completo: 'Luisa Fernández Castro',
-      celular: '555-444-333',
+      nombre_completo: 'Luisa Vargas Camacho',
+      celular: '60123456',
       correo: 'luisa@example.com',
-      direccion: 'Pasaje Norte 202',
-      departamento: 'Piura',
-      provincia: 'Piura',
+      direccion: 'Av. Villazón #202',
+      departamento: 'Potosí',
+      provincia: 'Tomás Frías',
       notas: 'Cliente VIP'
     }
   },
@@ -119,17 +118,37 @@ const Ventas = () => {
   const ventasEspera = ventas.filter(v => v.estado === 'espera').length;
   const ventasReserva = ventas.filter(v => v.estado === 'reserva').length;
 
+  // Maneja el guardado simulado de una nueva venta
+  const handleNuevaVenta = (nueva: { clienteNombre: string; montoTotal: string }) => {
+    const nuevaVenta: Venta = {
+      id: (ventas.length + 1).toString(),
+      cliente_id: '', // Simulado
+      fecha: new Date().toISOString(),
+      total: parseFloat(nueva.montoTotal),
+      estado: 'reserva', // Nuevo por default como reserva
+      cliente: {
+        id: '',
+        nombre_completo: nueva.clienteNombre,
+        celular: null,
+        correo: null,
+        direccion: null,
+        departamento: null,
+        provincia: null,
+        notas: null,
+      }
+    };
+    setVentas([nuevaVenta, ...ventas]);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div className="flex items-center">
-          <RussianRuble className="h-5 w-5 mr-2 text-muted-foreground" />
+          {/* Icono removido porque no está en la lista permitida, para evitar error */}
           <h1 className="text-2xl font-bold tracking-tight">Ventas en Bolivianos (Bs)</h1>
         </div>
-        <Button>
-          <Plus className="h-4 w-4 mr-1" />
-          Nueva Venta
-        </Button>
+        {/* Modal de Nueva Venta */}
+        <NuevaVentaModal onNuevaVenta={handleNuevaVenta} />
       </div>
 
       {/* Tarjetas de resumen */}
