@@ -19,7 +19,10 @@ import {
   Upload, 
   Download,
   Bell,
-  ClipboardList
+  ClipboardList,
+  FileText,
+  Package,
+  Users
 } from 'lucide-react';
 
 const Configuracion = () => {
@@ -46,7 +49,7 @@ const Configuracion = () => {
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="business-name">Nombre del Negocio</Label>
-              <Input id="business-name" placeholder="Mi Negocio" defaultValue="Mi Tienda" />
+              <Input id="business-name" placeholder="Mi Negocio" defaultValue="Hobby Store" />
             </div>
             <div className="space-y-2">
               <Label htmlFor="email">Correo Electrónico</Label>
@@ -214,3 +217,4 @@ const Configuracion = () => {
 };
 
 export default Configuracion;
+

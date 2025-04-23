@@ -36,10 +36,13 @@ export function AppSidebar() {
     <Sidebar>
       <SidebarHeader className="p-4">
         <div className="flex items-center">
-          <div className="w-10 h-10 rounded-lg bg-app-blue flex items-center justify-center text-white font-bold text-xl">GS</div>
+          {/* Cambiamos logo y nombre */}
+          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#9b87f5] to-[#F97316] flex items-center justify-center text-white font-bold text-xl shadow-lg">
+            HS
+          </div>
           <div className="ml-2">
-            <h2 className="font-bold text-lg">GestióSales</h2>
-            <p className="text-xs opacity-70">Sistema de Gestión</p>
+            <h2 className="font-bold text-lg">Hobby Store</h2>
+            <p className="text-xs opacity-70">Tu Tienda de Anime</p>
           </div>
         </div>
       </SidebarHeader>
@@ -69,9 +72,10 @@ export function AppSidebar() {
       </SidebarContent>
       <SidebarFooter className="p-4">
         <div className="text-xs text-center opacity-70">
-          © 2025 GestióSales
+          © 2025 Hobby Store
         </div>
       </SidebarFooter>
     </Sidebar>
   );
 }
+
