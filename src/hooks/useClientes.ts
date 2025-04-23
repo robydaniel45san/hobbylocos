@@ -7,21 +7,23 @@ export const useClientes = () => {
   const [clientes, setClientes] = useState<Cliente[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // Obtiene clientes desde Supabase (automatizado)
+  // Esta función quedará comentada hasta que se cree la tabla en Supabase
   const fetchClientes = useCallback(async () => {
     setLoading(true);
     try {
-      const { supabase } = await import("@/integrations/supabase/client");
-      const { data, error } = await supabase
-        .from("clientes")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      if (error) {
-        console.error("Error al cargar clientes:", error);
-      } else if (data) {
-        setClientes(data);
-      }
+      // Comentamos este código hasta que se cree la tabla en Supabase
+      // const { supabase } = await import("@/integrations/supabase/client");
+      // const { data, error } = await supabase
+      //   .from("clientes")
+      //   .select("*")
+      //   .order("created_at", { ascending: false });
+      
+      // if (error) {
+      //   console.error("Error al cargar clientes:", error);
+      // } else if (data) {
+      //   setClientes(data);
+      // }
+      console.log("Función fetchClientes preparada para cuando exista la tabla en Supabase");
     } catch (err) {
       console.error("Error inesperado al cargar clientes:", err);
     } finally {
