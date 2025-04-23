@@ -4,14 +4,18 @@ import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import { NuevoProductoModal } from './NuevoProductoModal';
 import { useProductos } from "@/hooks/useProductos";
+import { Producto } from '@/types';
 
 export const ProductosHeader: React.FC = () => {
   // El hook se usa para actualizar productos luego de añadir uno nuevo
-  const { fetchProductos } = useProductos();
+  const { fetchProductos, setProductos, productos } = useProductos();
   const [open, setOpen] = useState(false);
 
-  const handleProductoCreado = () => {
-    // Refresca los productos del inventario al agregar uno nuevo
+  const handleProductoCreado = (nuevoProducto: Producto) => {
+    // Actualiza el estado local para mostrar el cambio inmediatamente
+    setProductos(prevProductos => [nuevoProducto, ...prevProductos]);
+    
+    // También refrescamos los productos del inventario
     fetchProductos();
   };
 

@@ -6,7 +6,15 @@ import { ProductosFilterBar } from '@/components/productos/ProductosFilterBar';
 import { ProductosTable } from '@/components/productos/ProductosTable';
 
 const Productos = () => {
-  const { filtro, setFiltro, productos, productosFiltrados } = useProductos();
+  // Usamos un único estado compartido desde useProductos
+  const { 
+    filtro, 
+    setFiltro, 
+    productos, 
+    setProductos, 
+    productosFiltrados,
+    fetchProductos 
+  } = useProductos();
 
   return (
     <div className="space-y-6">

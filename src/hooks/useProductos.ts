@@ -10,14 +10,23 @@ export const useProductos = () => {
   // Obtiene productos desde Supabase (automatizado)
   const fetchProductos = useCallback(async () => {
     setLoading(true);
-    const { supabase } = await import("@/integrations/supabase/client");
-    const { data, error } = await supabase
-      .from("productos")
-      .select("*")
-      .order("created_at", { ascending: false });
+    try {
+      const { supabase } = await import("@/integrations/supabase/client");
+      const { data, error } = await supabase
+        .from("productos")
+        .select("*")
+        .order("created_at", { ascending: false });
 
-    if (!error && data) setProductos(data);
-    setLoading(false);
+      if (error) {
+        console.error("Error al cargar productos:", error);
+      } else if (data) {
+        setProductos(data);
+      }
+    } catch (err) {
+      console.error("Error inesperado al cargar productos:", err);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   useEffect(() => {
