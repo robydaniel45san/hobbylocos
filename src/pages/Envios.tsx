@@ -1,33 +1,12 @@
 
 import React, { useState } from 'react';
-import { 
-  Table, 
-  TableHeader, 
-  TableBody, 
-  TableRow, 
-  TableHead, 
-  TableCell 
-} from '@/components/ui/table';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { 
-  Search, 
-  Truck,
-  MapPin,
-} from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Envio, EstadoEnvio } from '@/types';
+import { EnviosResumenCards } from '@/components/envios/EnviosResumenCards';
+import { EnviosFilterBar } from '@/components/envios/EnviosFilterBar';
+import { EnviosTable } from '@/components/envios/EnviosTable';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { Envio, EstadoEnvio } from '@/types';
-import { cn } from '@/lib/utils';
+import { Badge } from '@/components/ui/badge';
 
 // Envíos de ejemplo
 const enviosDemoData: Envio[] = [
@@ -127,136 +106,25 @@ const Envios = () => {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card 
-          className={cn(
-            "border-l-4 border-l-app-blue cursor-pointer transition-all hover:shadow-md", 
-            estadoFiltro === 'todos' ? "bg-blue-50" : ""
-          )}
-          onClick={() => setEstadoFiltro('todos')}
-        >
-          <CardContent className="p-4 flex items-center justify-between">
-            <div>
-              <p className="text-sm text-muted-foreground">Total Envíos</p>
-              <p className="font-bold text-lg">{totalEnvios}</p>
-            </div>
-            <div className="bg-app-blue rounded-full p-2">
-              <Truck className="h-5 w-5 text-white" />
-            </div>
-          </CardContent>
-        </Card>
-        <Card 
-          className={cn(
-            "border-l-4 border-l-status-pendiente cursor-pointer transition-all hover:shadow-md",
-            estadoFiltro === 'pendiente' ? "bg-orange-50" : ""
-          )}
-          onClick={() => setEstadoFiltro('pendiente')}
-        >
-          <CardContent className="p-4 flex items-center justify-between">
-            <div>
-              <p className="text-sm text-muted-foreground">Pendientes</p>
-              <p className="font-bold text-lg">{enviosPendientes}</p>
-            </div>
-            <div className="bg-status-pendiente rounded-full p-2">
-              <Truck className="h-5 w-5 text-white" />
-            </div>
-          </CardContent>
-        </Card>
-        <Card 
-          className={cn(
-            "border-l-4 border-l-status-enviado cursor-pointer transition-all hover:shadow-md",
-            estadoFiltro === 'enviado' ? "bg-purple-50" : ""
-          )}
-          onClick={() => setEstadoFiltro('enviado')}
-        >
-          <CardContent className="p-4 flex items-center justify-between">
-            <div>
-              <p className="text-sm text-muted-foreground">Enviados</p>
-              <p className="font-bold text-lg">{enviosEnviados}</p>
-            </div>
-            <div className="bg-status-enviado rounded-full p-2">
-              <Truck className="h-5 w-5 text-white" />
-            </div>
-          </CardContent>
-        </Card>
-        <Card 
-          className={cn(
-            "border-l-4 border-l-status-entregado cursor-pointer transition-all hover:shadow-md",
-            estadoFiltro === 'entregado' ? "bg-green-50" : ""
-          )}
-          onClick={() => setEstadoFiltro('entregado')}
-        >
-          <CardContent className="p-4 flex items-center justify-between">
-            <div>
-              <p className="text-sm text-muted-foreground">Entregados</p>
-              <p className="font-bold text-lg">{enviosEntregados}</p>
-            </div>
-            <div className="bg-status-entregado rounded-full p-2">
-              <Truck className="h-5 w-5 text-white" />
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      <EnviosResumenCards
+        estadoFiltro={estadoFiltro}
+        setEstadoFiltro={setEstadoFiltro}
+        totalEnvios={totalEnvios}
+        enviosPendientes={enviosPendientes}
+        enviosEnviados={enviosEnviados}
+        enviosEntregados={enviosEntregados}
+      />
 
-      <div className="flex flex-wrap gap-4 items-center justify-between">
-        <div className="flex items-center relative max-w-sm">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Buscar por ubicación, empresa..."
-            className="pl-9 w-full"
-            value={filtro}
-            onChange={(e) => setFiltro(e.target.value)}
-          />
-        </div>
-      </div>
+      <EnviosFilterBar
+        filtro={filtro}
+        setFiltro={setFiltro}
+      />
 
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>ID Venta</TableHead>
-              <TableHead>Ubicación</TableHead>
-              <TableHead>Empresa</TableHead>
-              <TableHead>Fecha Envío</TableHead>
-              <TableHead>Costo</TableHead>
-              <TableHead>Estado</TableHead>
-              <TableHead className="text-right">Acciones</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {enviosFiltrados.length > 0 ? (
-              enviosFiltrados.map((envio) => (
-                <TableRow key={envio.id}>
-                  <TableCell className="font-medium">#{envio.venta_id.substring(0, 8)}</TableCell>
-                  <TableCell>
-                    <div className="flex items-center">
-                      <MapPin className="h-4 w-4 mr-1 text-muted-foreground" />
-                      <span>
-                        {[envio.provincia, envio.departamento].filter(Boolean).join(', ')}
-                      </span>
-                    </div>
-                  </TableCell>
-                  <TableCell>{envio.empresa_envio || '-'}</TableCell>
-                  <TableCell>{formatearFecha(envio.fecha_envio)}</TableCell>
-                  <TableCell>${envio.costo?.toFixed(2) || '-'}</TableCell>
-                  <TableCell>{renderEstadoBadge(envio.estado)}</TableCell>
-                  <TableCell className="text-right">
-                    <Button size="sm" variant="ghost">
-                      Actualizar
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={7} className="h-24 text-center">
-                  No se encontraron envíos
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
+      <EnviosTable
+        envios={enviosFiltrados}
+        formatearFecha={formatearFecha}
+        renderEstadoBadge={renderEstadoBadge}
+      />
     </div>
   );
 };
