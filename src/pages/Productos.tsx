@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { 
   Table, 
@@ -13,66 +14,66 @@ import { Badge } from '@/components/ui/badge';
 import { Plus, Search, Package, AlertTriangle } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Producto } from '@/types';
-import { RussianRuble } from 'lucide-react';
 
+// DEMO realista para tienda mayorista/minorista de figuras y artículos de anime
 const productosDemoData: Producto[] = [
   {
     id: '1',
-    nombre: 'Smartphone Galaxy S21',
-    categoria: 'Electrónicos',
-    stock: 15,
-    precio_unitario: 799.99,
-    descripcion: 'Smartphone de última generación',
+    nombre: 'Figura Naruto Uzumaki - 20cm',
+    categoria: 'Figuras',
+    stock: 20,
+    precio_unitario: 130.00,
+    descripcion: 'Figura coleccionable de Naruto con base, acabado premium.',
     imagen_url: null,
     activo: true
   },
   {
     id: '2',
-    nombre: 'Laptop HP Pavilion',
-    categoria: 'Computación',
-    stock: 8,
-    precio_unitario: 1099.99,
-    descripcion: 'Laptop para uso profesional',
+    nombre: 'Katana decorativa - Kimetsu no Yaiba',
+    categoria: 'Katanas',
+    stock: 6,
+    precio_unitario: 270.00,
+    descripcion: 'Katana de Tanjiro Kamado (replica decorativa, 1m).',
     imagen_url: null,
     activo: true
   },
   {
     id: '3',
-    nombre: 'Auriculares Sony WH-1000XM4',
-    categoria: 'Audio',
-    stock: 22,
-    precio_unitario: 349.99,
-    descripcion: 'Auriculares con cancelación de ruido',
+    nombre: 'Mochila Pokémon Eevee',
+    categoria: 'Mochilas',
+    stock: 14,
+    precio_unitario: 110.00,
+    descripcion: 'Mochila escolar con diseño de Eevee. Material resistente.',
     imagen_url: null,
     activo: true
   },
   {
     id: '4',
-    nombre: 'Tablet iPad Pro',
-    categoria: 'Tabletas',
-    stock: 3,
-    precio_unitario: 899.99,
-    descripcion: 'Tablet de alto rendimiento',
+    nombre: 'Llavero Akatsuki',
+    categoria: 'Llaveros',
+    stock: 40,
+    precio_unitario: 20.00,
+    descripcion: 'Llavero metálico con logo de la organización Akatsuki.',
     imagen_url: null,
     activo: true
   },
   {
     id: '5',
-    nombre: 'Monitor LG 27"',
-    categoria: 'Monitores',
-    stock: 12,
-    precio_unitario: 299.99,
-    descripcion: 'Monitor de alta resolución',
+    nombre: 'Figura Goku Super Saiyan - 18cm',
+    categoria: 'Figuras',
+    stock: 4,
+    precio_unitario: 125.00,
+    descripcion: 'Figura articulada de Goku con efecto de poder.',
     imagen_url: null,
     activo: true
   },
   {
     id: '6',
-    nombre: 'Teclado Mecánico Logitech',
-    categoria: 'Accesorios',
+    nombre: 'Set de Pósters My Hero Academia (5u)',
+    categoria: 'Pósters',
     stock: 0,
-    precio_unitario: 129.99,
-    descripcion: 'Teclado mecánico para gaming',
+    precio_unitario: 45.00,
+    descripcion: 'Set de 5 pósters tamaño A3, alta resolución.',
     imagen_url: null,
     activo: false
   },
@@ -113,9 +114,9 @@ const Productos = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Productos</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Productos Anime</h1>
           <p className="text-muted-foreground">
-            Gestiona tu inventario de productos
+            Venta mayorista y minorista de figuras, katanas, mochilas, llaveros y artículos de anime.
           </p>
         </div>
         <Button>
@@ -128,7 +129,7 @@ const Productos = () => {
         <div className="flex items-center relative max-w-sm">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Buscar productos..."
+            placeholder="Buscar productos de anime..."
             className="pl-9 w-full"
             value={filtro}
             onChange={(e) => setFiltro(e.target.value)}
@@ -169,7 +170,7 @@ const Productos = () => {
               <TableHead>Nombre</TableHead>
               <TableHead>Categoría</TableHead>
               <TableHead>Stock</TableHead>
-              <TableHead>Precio</TableHead>
+              <TableHead>Precio (Bs)</TableHead>
               <TableHead>Estado</TableHead>
               <TableHead className="text-right">Acciones</TableHead>
             </TableRow>
@@ -181,7 +182,9 @@ const Productos = () => {
                   <TableCell className="font-medium">{producto.nombre}</TableCell>
                   <TableCell>{producto.categoria || '-'}</TableCell>
                   <TableCell>{renderEstadoStock(producto.stock)}</TableCell>
-                  <TableCell>Bs {producto.precio_unitario.toFixed(2)}</TableCell>
+                  <TableCell>
+                    Bs {producto.precio_unitario.toFixed(2)}
+                  </TableCell>
                   <TableCell>
                     <Badge variant={producto.activo ? "outline" : "secondary"}>
                       {producto.activo ? 'Activo' : 'Inactivo'}
@@ -209,3 +212,4 @@ const Productos = () => {
 };
 
 export default Productos;
+
