@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,6 +62,22 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				app: {
+					'blue': '#3b82f6',
+					'blue-light': '#60a5fa',
+					'blue-dark': '#2563eb',
+					'gray': '#64748b',
+					'gray-light': '#94a3b8',
+					'gray-dark': '#334155'
+				},
+				status: {
+					'reserva': '#fbbf24',
+					'espera': '#60a5fa',
+					'realizado': '#34d399',
+					'pendiente': '#d97706',
+					'enviado': '#8b5cf6',
+					'entregado': '#10b981'
 				}
 			},
 			borderRadius: {
