@@ -27,7 +27,7 @@ export function TopProductos({ productos }: TopProductosProps) {
                   <p className="text-sm text-muted-foreground">Vendidos: {producto.cantidad}</p>
                 </div>
               </div>
-              <Badge variant="secondary">${producto.total.toFixed(2)}</Badge>
+              <Badge variant="secondary">Bs {producto.total.toFixed(2)}</Badge>
             </div>
           ))}
         </div>

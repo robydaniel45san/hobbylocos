@@ -11,7 +11,8 @@ export const useProductos = () => {
     producto.nombre.toLowerCase().includes(filtro.toLowerCase()) ||
     (producto.categoria && producto.categoria.toLowerCase().includes(filtro.toLowerCase())) ||
     String(producto.stock).includes(filtro) ||
-    String(producto.precio_unitario).includes(filtro)
+    String(producto.precio_minorista).includes(filtro) ||
+    String(producto.precio_mayorista).includes(filtro)
   );
 
   return {

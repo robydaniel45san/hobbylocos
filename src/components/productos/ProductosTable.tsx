@@ -26,7 +26,8 @@ export const ProductosTable: React.FC<ProductosTableProps> = ({ productos }) => 
             <TableHead>Nombre</TableHead>
             <TableHead>Categoría</TableHead>
             <TableHead>Stock</TableHead>
-            <TableHead>Precio (Bs)</TableHead>
+            <TableHead>Precio Minorista (Bs)</TableHead>
+            <TableHead>Precio Mayorista (Bs)</TableHead>
             <TableHead>Estado</TableHead>
             <TableHead className="text-right">Acciones</TableHead>
           </TableRow>
@@ -41,7 +42,10 @@ export const ProductosTable: React.FC<ProductosTableProps> = ({ productos }) => 
                   <ProductoStockBadge stock={producto.stock} />
                 </TableCell>
                 <TableCell>
-                  Bs {producto.precio_unitario.toFixed(2)}
+                  Bs {producto.precio_minorista.toFixed(2)}
+                </TableCell>
+                <TableCell>
+                  Bs {producto.precio_mayorista.toFixed(2)}
                 </TableCell>
                 <TableCell>
                   <Badge variant={producto.activo ? "outline" : "secondary"}>
@@ -57,7 +61,7 @@ export const ProductosTable: React.FC<ProductosTableProps> = ({ productos }) => 
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={6} className="h-24 text-center">
+              <TableCell colSpan={7} className="h-24 text-center">
                 No se encontraron productos
               </TableCell>
             </TableRow>

@@ -1,10 +1,12 @@
+
 // Interfaces de entidades principales
 export interface Producto {
   id: string;
   nombre: string;
   categoria: string | null;
   stock: number;
-  precio_unitario: number;
+  precio_minorista: number;
+  precio_mayorista: number;
   descripcion: string | null;
   imagen_url: string | null;
   activo: boolean;

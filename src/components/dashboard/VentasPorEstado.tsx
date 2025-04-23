@@ -34,7 +34,7 @@ export function VentasPorEstado({ datos }: VentasPorEstadoProps) {
                     <span className="capitalize">{item.estado}</span>
                   </div>
                   <span className="text-sm font-medium">
-                    ${item.total.toFixed(2)} ({item.cantidad})
+                    Bs {item.total.toFixed(2)} ({item.cantidad})
                   </span>
                 </div>
                 <div className="w-full bg-gray-100 rounded-full h-2">
