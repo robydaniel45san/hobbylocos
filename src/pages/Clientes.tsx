@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { 
   Table, 
   TableHeader, 
@@ -12,74 +12,15 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Plus, Search, Users } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Cliente } from '@/types';
-
-// Clientes de ejemplo
-const clientesDemoData: Cliente[] = [
-  {
-    id: '1',
-    nombre_completo: 'María García Pérez',
-    celular: '999-888-777',
-    correo: 'maria@example.com',
-    direccion: 'Av. Principal 123',
-    departamento: 'Lima',
-    provincia: 'Lima',
-    notas: 'Cliente habitual'
-  },
-  {
-    id: '2',
-    nombre_completo: 'Juan Rodríguez Sánchez',
-    celular: '888-777-666',
-    correo: 'juan@example.com',
-    direccion: 'Calle Secundaria 456',
-    departamento: 'Arequipa',
-    provincia: 'Arequipa',
-    notas: null
-  },
-  {
-    id: '3',
-    nombre_completo: 'Ana López Martínez',
-    celular: '777-666-555',
-    correo: 'ana@example.com',
-    direccion: 'Av. Central 789',
-    departamento: 'Cusco',
-    provincia: 'Cusco',
-    notas: 'Prefiere entregas por la tarde'
-  },
-  {
-    id: '4',
-    nombre_completo: 'Pedro González Díaz',
-    celular: '666-555-444',
-    correo: 'pedro@example.com',
-    direccion: 'Jr. Lateral 101',
-    departamento: 'Trujillo',
-    provincia: 'La Libertad',
-    notas: null
-  },
-  {
-    id: '5',
-    nombre_completo: 'Luisa Fernández Castro',
-    celular: '555-444-333',
-    correo: 'luisa@example.com',
-    direccion: 'Pasaje Norte 202',
-    departamento: 'Piura',
-    provincia: 'Piura',
-    notas: 'Cliente VIP'
-  },
-];
+import { useClientes } from '@/hooks/useClientes';
 
 const Clientes = () => {
-  const [filtro, setFiltro] = useState<string>('');
-  const [clientes, setClientes] = useState<Cliente[]>(clientesDemoData);
-
-  // Función para filtrar clientes
-  const clientesFiltrados = clientes.filter(cliente => 
-    cliente.nombre_completo.toLowerCase().includes(filtro.toLowerCase()) ||
-    (cliente.correo && cliente.correo.toLowerCase().includes(filtro.toLowerCase())) ||
-    (cliente.celular && cliente.celular.includes(filtro)) ||
-    (cliente.departamento && cliente.departamento.toLowerCase().includes(filtro.toLowerCase())) ||
-    (cliente.provincia && cliente.provincia.toLowerCase().includes(filtro.toLowerCase()))
-  );
+  const { 
+    filtro, 
+    setFiltro, 
+    clientesFiltrados,
+    loading 
+  } = useClientes();
 
   return (
     <div className="space-y-6">
@@ -100,7 +41,7 @@ const Clientes = () => {
         <div className="flex items-center relative max-w-sm">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Buscar por nombre, email, ubicación..."
+            placeholder="Buscar por nombre, celular, ubicación..."
             className="pl-9 w-full"
             value={filtro}
             onChange={(e) => setFiltro(e.target.value)}
@@ -113,7 +54,7 @@ const Clientes = () => {
             </div>
             <div>
               <p className="text-sm text-purple-700">Total Clientes</p>
-              <p className="font-bold text-lg">{clientes.length}</p>
+              <p className="font-bold text-lg">{clientesFiltrados.length}</p>
             </div>
           </CardContent>
         </Card>
@@ -131,7 +72,13 @@ const Clientes = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {clientesFiltrados.length > 0 ? (
+            {loading ? (
+              <TableRow>
+                <TableCell colSpan={5} className="h-24 text-center">
+                  Cargando datos de clientes...
+                </TableCell>
+              </TableRow>
+            ) : clientesFiltrados.length > 0 ? (
               clientesFiltrados.map((cliente) => (
                 <TableRow key={cliente.id}>
                   <TableCell className="font-medium">{cliente.nombre_completo}</TableCell>
