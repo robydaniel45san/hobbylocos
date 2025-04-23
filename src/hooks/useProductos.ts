@@ -1,11 +1,28 @@
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Producto } from '@/types';
-import { productosDemoData } from '@/data/productosData';
 
 export const useProductos = () => {
   const [filtro, setFiltro] = useState<string>('');
-  const [productos, setProductos] = useState<Producto[]>(productosDemoData);
+  const [productos, setProductos] = useState<Producto[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  // Obtiene productos desde Supabase (automatizado)
+  const fetchProductos = useCallback(async () => {
+    setLoading(true);
+    const { supabase } = await import("@/integrations/supabase/client");
+    const { data, error } = await supabase
+      .from("productos")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (!error && data) setProductos(data);
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    fetchProductos();
+  }, [fetchProductos]);
 
   const productosFiltrados = productos.filter(producto => 
     producto.nombre.toLowerCase().includes(filtro.toLowerCase()) ||
@@ -20,6 +37,8 @@ export const useProductos = () => {
     setFiltro,
     productos,
     setProductos,
-    productosFiltrados
+    productosFiltrados,
+    fetchProductos,
+    loading
   };
 };
