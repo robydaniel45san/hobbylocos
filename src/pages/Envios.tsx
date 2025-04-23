@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Envio, EstadoEnvio } from '@/types';
 import { EnviosResumenCards } from '@/components/envios/EnviosResumenCards';
 import { EnviosFilterBar } from '@/components/envios/EnviosFilterBar';
@@ -7,57 +7,38 @@ import { EnviosTable } from '@/components/envios/EnviosTable';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { Badge } from '@/components/ui/badge';
-
-// Envíos de ejemplo
-const enviosDemoData: Envio[] = [
-  {
-    id: '1',
-    venta_id: '1',
-    fecha_envio: new Date(2025, 3, 23).toISOString(),
-    departamento: 'Lima',
-    provincia: 'Lima',
-    empresa_envio: 'Olva Courier',
-    costo: 15.00,
-    estado: 'entregado'
-  },
-  {
-    id: '2',
-    venta_id: '2',
-    fecha_envio: new Date(2025, 3, 22).toISOString(),
-    departamento: 'Arequipa',
-    provincia: 'Arequipa',
-    empresa_envio: 'Olva Courier',
-    costo: 25.00,
-    estado: 'enviado'
-  },
-  {
-    id: '3',
-    venta_id: '3',
-    fecha_envio: null,
-    departamento: 'Cusco',
-    provincia: 'Cusco',
-    empresa_envio: 'Shalom',
-    costo: 30.00,
-    estado: 'pendiente'
-  },
-  {
-    id: '4',
-    venta_id: '4',
-    fecha_envio: null,
-    departamento: 'La Libertad',
-    provincia: 'Trujillo',
-    empresa_envio: 'Shalom',
-    costo: 20.00,
-    estado: 'pendiente'
-  },
-];
+import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/hooks/use-toast";
+import { Plus } from "lucide-react";
+import { NuevoEnvioModal } from '@/components/envios/NuevoEnvioModal';
 
 const Envios = () => {
   const [filtro, setFiltro] = useState<string>('');
   const [estadoFiltro, setEstadoFiltro] = useState<EstadoEnvio | 'todos'>('todos');
-  const [envios, setEnvios] = useState<Envio[]>(enviosDemoData);
+  const [envios, setEnvios] = useState<Envio[]>([]);
+  const [nuevoEnvioOpen, setNuevoEnvioOpen] = useState(false);
+  const [cargando, setCargando] = useState(false);
 
-  // Función para filtrar envíos
+  const cargarEnvios = async () => {
+    setCargando(true);
+    const { data, error } = await supabase
+      .from("envios")
+      .select("*")
+      .order("created_at", { ascending: false });
+    if (error) {
+      toast({ title: "Error", description: "No se pudieron cargar los envíos", variant: "destructive" });
+    } else {
+      setEnvios((data as Envio[]) || []);
+    }
+    setCargando(false);
+  };
+
+  useEffect(() => {
+    cargarEnvios();
+  }, []);
+
+  // Filtrado
   const enviosFiltrados = envios.filter(envio => {
     const matchesFiltro = 
       (envio.departamento && envio.departamento.toLowerCase().includes(filtro.toLowerCase())) ||
@@ -67,23 +48,22 @@ const Envios = () => {
       envio.venta_id.includes(filtro);
     
     const matchesEstado = estadoFiltro === 'todos' || envio.estado === estadoFiltro;
-    
     return matchesFiltro && matchesEstado;
   });
 
-  // Función para formatear fecha
+  // Formateo de fecha
   const formatearFecha = (fecha: string | null) => {
     if (!fecha) return '-';
     return format(new Date(fecha), 'dd MMM yyyy', { locale: es });
   };
 
-  // Obtener estadísticas de envíos
+  // Estadísticas
   const totalEnvios = envios.length;
   const enviosPendientes = envios.filter(e => e.estado === 'pendiente').length;
   const enviosEnviados = envios.filter(e => e.estado === 'enviado').length;
   const enviosEntregados = envios.filter(e => e.estado === 'entregado').length;
 
-  // Función para renderizar el badge de estado
+  // Badges de estado
   const renderEstadoBadge = (estado: EstadoEnvio) => {
     switch (estado) {
       case 'entregado':
@@ -97,13 +77,24 @@ const Envios = () => {
     }
   };
 
+  // Handler para agregar envío
+  const handleEnvioCreado = () => {
+    setNuevoEnvioOpen(false);
+    cargarEnvios();
+  };
+
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">Envíos</h1>
-        <p className="text-muted-foreground">
-          Seguimiento de envíos y entregas
-        </p>
+      <div className="flex justify-between items-center gap-2">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Envíos</h1>
+          <p className="text-muted-foreground">
+            Seguimiento de envíos y entregas
+          </p>
+        </div>
+        <Button onClick={() => setNuevoEnvioOpen(true)}>
+          <Plus className="h-4 w-4 mr-1" /> Nuevo Envío
+        </Button>
       </div>
 
       <EnviosResumenCards
@@ -124,9 +115,16 @@ const Envios = () => {
         envios={enviosFiltrados}
         formatearFecha={formatearFecha}
         renderEstadoBadge={renderEstadoBadge}
+        cargando={cargando}
+      />
+      <NuevoEnvioModal
+        open={nuevoEnvioOpen}
+        setOpen={setNuevoEnvioOpen}
+        onEnvioCreado={handleEnvioCreado}
       />
     </div>
   );
 };
 
 export default Envios;
+

@@ -4,22 +4,22 @@ import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { MapPin } from "lucide-react";
-import { format } from "date-fns";
-import { es } from "date-fns/locale";
 import { Envio, EstadoEnvio } from "@/types";
 
 interface EnviosTableProps {
   envios: Envio[];
   formatearFecha: (fecha: string | null) => string;
   renderEstadoBadge: (estado: EstadoEnvio) => React.ReactNode;
+  cargando?: boolean;
 }
 
 export const EnviosTable: React.FC<EnviosTableProps> = ({
   envios,
   formatearFecha,
-  renderEstadoBadge
+  renderEstadoBadge,
+  cargando,
 }) => (
-  <div className="rounded-md border">
+  <div className="rounded-md border min-h-[280px]">
     <Table>
       <TableHeader>
         <TableRow>
@@ -33,10 +33,16 @@ export const EnviosTable: React.FC<EnviosTableProps> = ({
         </TableRow>
       </TableHeader>
       <TableBody>
-        {envios.length > 0 ? (
+        {cargando ? (
+          <TableRow>
+            <TableCell colSpan={7} className="h-24 text-center">
+              Cargando envíos...
+            </TableCell>
+          </TableRow>
+        ) : envios.length > 0 ? (
           envios.map((envio) => (
             <TableRow key={envio.id}>
-              <TableCell className="font-medium">#{envio.venta_id.substring(0, 8)}</TableCell>
+              <TableCell className="font-medium">#{envio.venta_id?.substring(0, 8)}</TableCell>
               <TableCell>
                 <div className="flex items-center">
                   <MapPin className="h-4 w-4 mr-1 text-muted-foreground" />
@@ -47,7 +53,7 @@ export const EnviosTable: React.FC<EnviosTableProps> = ({
               </TableCell>
               <TableCell>{envio.empresa_envio || '-'}</TableCell>
               <TableCell>{formatearFecha(envio.fecha_envio)}</TableCell>
-              <TableCell>${envio.costo?.toFixed(2) || '-'}</TableCell>
+              <TableCell>{envio.costo !== null ? `Bs${Number(envio.costo).toFixed(2)}` : '-'}</TableCell>
               <TableCell>{renderEstadoBadge(envio.estado)}</TableCell>
               <TableCell className="text-right">
                 <Button size="sm" variant="ghost">
