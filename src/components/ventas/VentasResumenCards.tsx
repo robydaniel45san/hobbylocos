@@ -4,10 +4,11 @@ import { Card, CardContent } from '@/components/ui/card';
 import { FileText } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import { EstadoVenta } from '@/types';
 
 interface ResumenCardsProps {
-  estadoFiltro: string;
-  setEstadoFiltro: (estado: string) => void;
+  estadoFiltro: 'todos' | EstadoVenta;
+  setEstadoFiltro: (estado: 'todos' | EstadoVenta) => void;
   totalVentas: number;
   ventasRealizadas: number;
   ventasEspera: number;
@@ -93,3 +94,4 @@ export const VentasResumenCards: React.FC<ResumenCardsProps> = ({
     </Card>
   </div>
 );
+

@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Plus, RussianRuble } from 'lucide-react';
@@ -99,7 +100,7 @@ const ventasDemoData: Venta[] = [
 
 const Ventas = () => {
   const [filtro, setFiltro] = useState<string>('');
-  const [estadoFiltro, setEstadoFiltro] = useState<EstadoVenta | 'todos'>('todos');
+  const [estadoFiltro, setEstadoFiltro] = useState<'todos' | EstadoVenta>('todos');
   const [ventas, setVentas] = useState<Venta[]>(ventasDemoData);
 
   const ventasFiltradas = ventas.filter(venta => {
