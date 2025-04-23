@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { FileText, Package, ShoppingCart, TrendingUp } from 'lucide-react';
 import { StatCard } from '@/components/dashboard/StatCard';
@@ -6,10 +5,11 @@ import { VentasChart } from '@/components/dashboard/VentasChart';
 import { TopProductos } from '@/components/dashboard/TopProductos';
 import { VentasPorEstado } from '@/components/dashboard/VentasPorEstado';
 import { ProductoMasVendido, VentasPorEstado as VentasPorEstadoType, VentasPorMes } from '@/types';
+import { RussianRuble } from 'lucide-react';
 
 // Datos de ejemplo para el dashboard
 const ventasPorMes: VentasPorMes[] = [
-  { mes: 'Ene', total: 4200 },
+  { mes: 'Ene', total: 4200 },  // Valores en Bs
   { mes: 'Feb', total: 3800 },
   { mes: 'Mar', total: 5100 },
   { mes: 'Abr', total: 4800 },
@@ -44,9 +44,9 @@ const Dashboard = () => {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <StatCard 
           title="Ventas Totales" 
-          value="$38,500" 
+          value="Bs 38,500"  // Cambiar a Bs 
           trend={{ value: 12, isPositive: true }}
-          icon={<TrendingUp className="h-5 w-5 text-app-blue" />}
+          icon={<RussianRuble className="h-5 w-5 text-app-blue" />}
         />
         <StatCard 
           title="Ventas Realizadas" 

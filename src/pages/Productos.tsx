@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { 
   Table, 
@@ -14,8 +13,8 @@ import { Badge } from '@/components/ui/badge';
 import { Plus, Search, Package, AlertTriangle } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Producto } from '@/types';
+import { RussianRuble } from 'lucide-react';
 
-// Productos de ejemplo
 const productosDemoData: Producto[] = [
   {
     id: '1',
@@ -83,7 +82,6 @@ const Productos = () => {
   const [filtro, setFiltro] = useState<string>('');
   const [productos, setProductos] = useState<Producto[]>(productosDemoData);
 
-  // Función para filtrar productos
   const productosFiltrados = productos.filter(producto => 
     producto.nombre.toLowerCase().includes(filtro.toLowerCase()) ||
     (producto.categoria && producto.categoria.toLowerCase().includes(filtro.toLowerCase())) ||
@@ -91,7 +89,6 @@ const Productos = () => {
     String(producto.precio_unitario).includes(filtro)
   );
 
-  // Función para mostrar el estado del stock
   const renderEstadoStock = (stock: number) => {
     if (stock === 0) {
       return (
@@ -184,7 +181,7 @@ const Productos = () => {
                   <TableCell className="font-medium">{producto.nombre}</TableCell>
                   <TableCell>{producto.categoria || '-'}</TableCell>
                   <TableCell>{renderEstadoStock(producto.stock)}</TableCell>
-                  <TableCell>${producto.precio_unitario.toFixed(2)}</TableCell>
+                  <TableCell>Bs {producto.precio_unitario.toFixed(2)}</TableCell>
                   <TableCell>
                     <Badge variant={producto.activo ? "outline" : "secondary"}>
                       {producto.activo ? 'Activo' : 'Inactivo'}

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { 
   Table, 
@@ -29,6 +28,7 @@ import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { Venta, EstadoVenta } from '@/types';
 import { cn } from '@/lib/utils';
+import { RussianRuble } from 'lucide-react';
 
 // Ventas de ejemplo
 const ventasDemoData: Venta[] = [
@@ -44,8 +44,8 @@ const ventasDemoData: Venta[] = [
       celular: '999-888-777',
       correo: 'maria@example.com',
       direccion: 'Av. Principal 123',
-      departamento: 'Lima',
-      provincia: 'Lima',
+      departamento: 'La Paz',
+      provincia: 'Murillo',
       notas: 'Cliente habitual'
     }
   },
@@ -124,7 +124,6 @@ const Ventas = () => {
   const [estadoFiltro, setEstadoFiltro] = useState<EstadoVenta | 'todos'>('todos');
   const [ventas, setVentas] = useState<Venta[]>(ventasDemoData);
 
-  // Función para filtrar ventas
   const ventasFiltradas = ventas.filter(venta => {
     const matchesFiltro = 
       (venta.cliente?.nombre_completo && venta.cliente.nombre_completo.toLowerCase().includes(filtro.toLowerCase())) ||
@@ -136,18 +135,15 @@ const Ventas = () => {
     return matchesFiltro && matchesEstado;
   });
 
-  // Función para formatear fecha
   const formatearFecha = (fecha: string) => {
     return format(new Date(fecha), 'dd MMM yyyy', { locale: es });
   };
 
-  // Obtener estadísticas de ventas
   const totalVentas = ventas.length;
   const ventasRealizadas = ventas.filter(v => v.estado === 'realizado').length;
   const ventasEspera = ventas.filter(v => v.estado === 'espera').length;
   const ventasReserva = ventas.filter(v => v.estado === 'reserva').length;
 
-  // Función para renderizar el badge de estado
   const renderEstadoBadge = (estado: EstadoVenta) => {
     switch (estado) {
       case 'realizado':
@@ -164,11 +160,9 @@ const Ventas = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Ventas</h1>
-          <p className="text-muted-foreground">
-            Gestiona tus ventas y pedidos
-          </p>
+        <div className="flex items-center">
+          <RussianRuble className="h-5 w-5 mr-2 text-muted-foreground" />
+          <h1 className="text-2xl font-bold tracking-tight">Ventas en Bolivianos (Bs)</h1>
         </div>
         <Button>
           <Plus className="h-4 w-4 mr-1" />
@@ -286,7 +280,7 @@ const Ventas = () => {
                     {venta.cliente?.nombre_completo || 'Cliente eliminado'}
                   </TableCell>
                   <TableCell>{formatearFecha(venta.fecha)}</TableCell>
-                  <TableCell className="font-medium">${venta.total.toFixed(2)}</TableCell>
+                  <TableCell className="font-medium">Bs {venta.total.toFixed(2)}</TableCell>
                   <TableCell>{renderEstadoBadge(venta.estado)}</TableCell>
                   <TableCell className="text-right">
                     <Button size="sm" variant="ghost">

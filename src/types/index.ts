@@ -1,4 +1,3 @@
-
 // Interfaces de entidades principales
 export interface Producto {
   id: string;
@@ -80,3 +79,6 @@ export interface ProductoMasVendido {
   cantidad: number;
   total: number;
 }
+
+// Añadir tipo de moneda boliviana
+export type Moneda = 'Bs';  // Bolivianos
