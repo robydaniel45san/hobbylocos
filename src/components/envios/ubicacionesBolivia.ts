@@ -26,3 +26,9 @@ export const provinciasPorDepartamento: Record<string, string[]> = {
   "Beni": ["Cercado", "Moxos", "Yacuma"],
   "Pando": ["Madre de Dios", "Manuripi", "Abuná"],
 };
+
+// Export the combined array that was being imported
+export const ubicacionesBolivia = departamentos.map(departamento => ({
+  departamento,
+  provincias: provinciasPorDepartamento[departamento] || []
+}));

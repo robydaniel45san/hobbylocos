@@ -61,6 +61,7 @@ export interface Envio {
   costo: number | null;
   estado: EstadoEnvio;
   created_at?: string;
+  venta?: Venta;
 }
 
 // Interfaces para estadísticas y dashboard

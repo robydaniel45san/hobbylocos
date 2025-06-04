@@ -1,6 +1,5 @@
-
 import { useState, useEffect, useCallback } from 'react';
-import { Envio, EstadoEnvio } from '@/types';
+import { Envio, EstadoEnvio, Venta, EstadoVenta } from '@/types';
 import { toast } from '@/hooks/use-toast';
 
 export const useEnvios = () => {
@@ -38,7 +37,11 @@ export const useEnvios = () => {
       } else if (data) {
         const enviosTyped = data.map(envio => ({
           ...envio,
-          estado: envio.estado as EstadoEnvio
+          estado: envio.estado as EstadoEnvio,
+          venta: envio.venta ? {
+            ...envio.venta,
+            estado: envio.venta.estado as EstadoVenta
+          } : undefined
         })) as Envio[];
         setEnvios(enviosTyped);
       }
@@ -97,7 +100,11 @@ export const useEnvios = () => {
       } else if (data) {
         const envioTyped = {
           ...data,
-          estado: data.estado as EstadoEnvio
+          estado: data.estado as EstadoEnvio,
+          venta: data.venta ? {
+            ...data.venta,
+            estado: data.venta.estado as EstadoVenta
+          } : undefined
         } as Envio;
         setEnvios(prev => [envioTyped, ...prev]);
         toast({
@@ -153,7 +160,11 @@ export const useEnvios = () => {
       } else if (data) {
         const envioTyped = {
           ...data,
-          estado: data.estado as EstadoEnvio
+          estado: data.estado as EstadoEnvio,
+          venta: data.venta ? {
+            ...data.venta,
+            estado: data.venta.estado as EstadoVenta
+          } : undefined
         } as Envio;
         setEnvios(prev => prev.map(e => e.id === id ? envioTyped : e));
         toast({

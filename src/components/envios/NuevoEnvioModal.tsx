@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import {
   Dialog,
@@ -15,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus } from "lucide-react";
-import { Venta, EstadoEnvio } from "@/types";
+import { Venta, EstadoEnvio, EstadoVenta } from "@/types";
 import { ubicacionesBolivia } from "./ubicacionesBolivia";
 
 interface NuevoEnvioModalProps {
@@ -77,9 +76,13 @@ export const NuevoEnvioModal: React.FC<NuevoEnvioModalProps> = ({
         return;
       }
 
-      // Filtrar ventas que no tienen envío
+      // Filtrar ventas que no tienen envío y type cast properly
       const ventasConEnvio = new Set(enviosData?.map(e => e.venta_id) || []);
-      const ventasSinEnvio = ventasData?.filter(v => !ventasConEnvio.has(v.id)) || [];
+      const ventasSinEnvio = ventasData?.filter(v => !ventasConEnvio.has(v.id))
+        .map(venta => ({
+          ...venta,
+          estado: venta.estado as EstadoVenta
+        })) || [];
       
       setVentas(ventasSinEnvio);
     } catch (err) {
