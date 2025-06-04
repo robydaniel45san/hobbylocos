@@ -21,9 +21,9 @@ interface VentasChartProps {
 
 export function VentasChart({ data, title = "Ventas por Mes" }: VentasChartProps) {
   return (
-    <Card className="w-full">
+    <Card className="glass-card border-white/10">
       <CardHeader>
-        <CardTitle>{title}</CardTitle>
+        <CardTitle className="text-foreground">{title}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="h-[300px]">
@@ -37,11 +37,36 @@ export function VentasChart({ data, title = "Ventas por Mes" }: VentasChartProps
                 bottom: 5,
               }}
             >
-              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-              <XAxis dataKey="mes" />
-              <YAxis />
-              <Tooltip />
-              <Bar dataKey="total" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+              <XAxis 
+                dataKey="mes" 
+                stroke="rgba(255,255,255,0.7)"
+                fontSize={12}
+              />
+              <YAxis 
+                stroke="rgba(255,255,255,0.7)"
+                fontSize={12}
+              />
+              <Tooltip 
+                contentStyle={{
+                  backgroundColor: 'rgba(255,255,255,0.1)',
+                  border: '1px solid rgba(255,255,255,0.2)',
+                  borderRadius: '8px',
+                  backdropFilter: 'blur(10px)'
+                }}
+                labelStyle={{ color: '#fff' }}
+              />
+              <Bar 
+                dataKey="total" 
+                fill="url(#gradient)" 
+                radius={[4, 4, 0, 0]}
+              />
+              <defs>
+                <linearGradient id="gradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#8b5cf6" />
+                  <stop offset="100%" stopColor="#3b82f6" />
+                </linearGradient>
+              </defs>
             </BarChart>
           </ResponsiveContainer>
         </div>
