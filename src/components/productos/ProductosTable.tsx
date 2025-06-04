@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
@@ -27,15 +28,12 @@ export const ProductosTable: React.FC<ProductosTableProps> = ({
     setEditandoProducto(producto);
   };
 
-  const handleActualizar = async (datosActualizados: Partial<Producto>) => {
-    if (editandoProducto) {
-      const success = await onActualizarProducto(editandoProducto.id, datosActualizados);
-      if (success) {
-        setEditandoProducto(null);
-      }
-      return success;
+  const handleActualizar = async (id: string, datosActualizados: Partial<Producto>) => {
+    const success = await onActualizarProducto(id, datosActualizados);
+    if (success) {
+      setEditandoProducto(null);
     }
-    return false;
+    return success;
   };
 
   if (loading) {
@@ -163,7 +161,7 @@ export const ProductosTable: React.FC<ProductosTableProps> = ({
           producto={editandoProducto}
           open={true}
           onOpenChange={(open) => !open && setEditandoProducto(null)}
-          onProductoActualizado={handleActualizar}
+          onProductoActualizado={(datosActualizados) => handleActualizar(editandoProducto.id, datosActualizados)}
         />
       )}
     </>

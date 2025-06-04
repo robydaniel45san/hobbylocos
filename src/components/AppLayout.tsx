@@ -10,7 +10,7 @@ import { ThemeToggle } from './theme/ThemeToggle';
 import { AuthModal } from './auth/AuthModal';
 import { useAuth } from '@/hooks/useAuth';
 
-export function AppLayout() {
+const AppLayout = () => {
   const { user, signOut } = useAuth();
   const [authModalAbierto, setAuthModalAbierto] = useState(false);
 
@@ -70,4 +70,6 @@ export function AppLayout() {
       />
     </SidebarProvider>
   );
-}
+};
+
+export default AppLayout;
