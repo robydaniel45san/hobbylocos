@@ -33,7 +33,12 @@ export const useVentas = () => {
           variant: "destructive",
         });
       } else if (data) {
-        setVentas(data);
+        // Asegurar que el estado sea del tipo correcto
+        const ventasTyped = data.map(venta => ({
+          ...venta,
+          estado: venta.estado as EstadoVenta
+        })) as Venta[];
+        setVentas(ventasTyped);
       }
     } catch (err) {
       console.error("Error inesperado al cargar ventas:", err);
@@ -79,7 +84,11 @@ export const useVentas = () => {
         });
         return false;
       } else if (data) {
-        setVentas(prev => [data, ...prev]);
+        const ventaTyped = {
+          ...data,
+          estado: data.estado as EstadoVenta
+        } as Venta;
+        setVentas(prev => [ventaTyped, ...prev]);
         toast({
           title: "Venta creada",
           description: "La venta se creó correctamente",
@@ -95,6 +104,7 @@ export const useVentas = () => {
       });
       return false;
     }
+    return false;
   }, []);
 
   // Actualizar estado de venta
@@ -120,7 +130,11 @@ export const useVentas = () => {
         });
         return false;
       } else if (data) {
-        setVentas(prev => prev.map(v => v.id === id ? data : v));
+        const ventaTyped = {
+          ...data,
+          estado: data.estado as EstadoVenta
+        } as Venta;
+        setVentas(prev => prev.map(v => v.id === id ? ventaTyped : v));
         toast({
           title: "Venta actualizada",
           description: "El estado de la venta se actualizó correctamente",
@@ -136,6 +150,7 @@ export const useVentas = () => {
       });
       return false;
     }
+    return false;
   }, []);
 
   // Eliminar venta
