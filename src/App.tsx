@@ -1,48 +1,44 @@
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { Toaster } from '@/components/ui/toaster';
+import AppLayout from '@/components/AppLayout';
+import Index from '@/pages/Index';
+import Dashboard from '@/pages/Dashboard';
+import Productos from '@/pages/Productos';
+import Ventas from '@/pages/Ventas';
+import Clientes from '@/pages/Clientes';
+import Envios from '@/pages/Envios';
+import Reportes from '@/pages/Reportes';
+import NotFound from '@/pages/NotFound';
+import CategoriasPage from '@/pages/CategoriasPage';
+import Configuracion from '@/pages/Configuracion';
+import CatalogoPage from '@/pages/CatalogoPage';
+import MovimientosStock from '@/pages/MovimientosStock';
+import AnalyticsPage from './pages/AnalyticsPage';
 
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AppLayout } from "./components/AppLayout";
-import Dashboard from "./pages/Dashboard";
-import Productos from "./pages/Productos";
-import Clientes from "./pages/Clientes";
-import Ventas from "./pages/Ventas";
-import Envios from "./pages/Envios";
-import Configuracion from "./pages/Configuracion";
-import MovimientosStock from "./pages/MovimientosStock";
-import Reportes from "./pages/Reportes";
-import NotFound from "./pages/NotFound";
-import CatalogoPage from "./pages/CatalogoPage";
-import CategoriasPage from "./pages/CategoriasPage";
-
-const queryClient = new QueryClient();
-
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
+function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<AppLayout />}>
+          <Route index element={<Index />} />
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="productos" element={<Productos />} />
+          <Route path="ventas" element={<Ventas />} />
+          <Route path="clientes" element={<Clientes />} />
+          <Route path="envios" element={<Envios />} />
+          <Route path="analytics" element={<AnalyticsPage />} />
+          <Route path="reportes" element={<Reportes />} />
+          <Route path="movimientos-stock" element={<MovimientosStock />} />
+          <Route path="categorias" element={<CategoriasPage />} />
+          <Route path="configuracion" element={<Configuracion />} />
+          <Route path="catalogo" element={<CatalogoPage />} />
+        </Route>
+        <Route path="*" element={<NotFound />} />
+      </Routes>
       <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route element={<AppLayout />}>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/productos" element={<Productos />} />
-            <Route path="/clientes" element={<Clientes />} />
-            <Route path="/ventas" element={<Ventas />} />
-            <Route path="/envios" element={<Envios />} />
-            <Route path="/stock" element={<MovimientosStock />} />
-            <Route path="/reportes" element={<Reportes />} />
-            <Route path="/categorias" element={<CategoriasPage />} />
-            <Route path="/catalogo" element={<CatalogoPage />} />
-            <Route path="/configuracion" element={<Configuracion />} />
-          </Route>
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+    </Router>
+  );
+}
 
 export default App;
