@@ -76,7 +76,7 @@ export const VentasTable: React.FC<VentasTableProps> = ({
                 <TableCell className="font-medium">Bs {venta.total.toFixed(2)}</TableCell>
                 <TableCell>
                   <Select 
-                    value={venta.estado} 
+                    value={venta.estado || 'reserva'} 
                     onValueChange={(nuevoEstado: EstadoVenta) => onActualizarEstado(venta.id, nuevoEstado)}
                   >
                     <SelectTrigger className="w-32">
