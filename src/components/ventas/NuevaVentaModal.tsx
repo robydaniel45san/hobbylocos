@@ -1,25 +1,28 @@
 
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Dialog,
-  DialogTrigger,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogDescription,
   DialogFooter,
   DialogClose,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
-import { Cliente } from "@/types";
+import { Cliente, EstadoVenta } from "@/types";
 
 interface NuevaVentaModalProps {
-  onNuevaVenta?: (venta: any) => void; // Callback opcional - solo para refrescar la lista
+  onNuevaVenta: (venta: {
+    cliente_id: string | null;
+    total: number;
+    estado: EstadoVenta;
+  }) => Promise<boolean>;
 }
 
 export const NuevaVentaModal: React.FC<NuevaVentaModalProps> = ({
@@ -27,62 +30,57 @@ export const NuevaVentaModal: React.FC<NuevaVentaModalProps> = ({
 }) => {
   const [open, setOpen] = useState(false);
   const [clientes, setClientes] = useState<Cliente[]>([]);
-  const [loadingClientes, setLoadingClientes] = useState(false);
-  const [clienteSeleccionado, setClienteSeleccionado] = useState("");
-  const [montoTotal, setMontoTotal] = useState("");
+  const [clienteId, setClienteId] = useState<string>("");
+  const [total, setTotal] = useState<string>("");
+  const [estado, setEstado] = useState<EstadoVenta>("reserva");
   const [guardando, setGuardando] = useState(false);
 
+  // Cargar clientes al abrir el modal
   useEffect(() => {
-    // Carga los clientes de Supabase
-    const fetchClientes = async () => {
-      setLoadingClientes(true);
+    if (open) {
+      cargarClientes();
+    }
+  }, [open]);
+
+  const cargarClientes = async () => {
+    try {
+      const { supabase } = await import("@/integrations/supabase/client");
       const { data, error } = await supabase
         .from("clientes")
         .select("*")
         .order("nombre_completo", { ascending: true });
+
       if (error) {
-        toast.error("Error al cargar clientes");
+        console.error("Error al cargar clientes:", error);
       } else if (data) {
         setClientes(data);
       }
-      setLoadingClientes(false);
-    };
-    if (open) fetchClientes();
-  }, [open]);
+    } catch (err) {
+      console.error("Error al cargar clientes:", err);
+    }
+  };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleGuardar = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!clienteSeleccionado || !montoTotal) {
-      toast.error("Completa todos los campos");
+    if (!total.trim() || isNaN(Number(total)) || Number(total) <= 0) {
       return;
     }
+
     setGuardando(true);
+    const success = await onNuevaVenta({
+      cliente_id: clienteId || null,
+      total: Number(total),
+      estado,
+    });
 
-    // Inserta la nueva venta en Supabase
-    const { data, error } = await supabase
-      .from("ventas")
-      .insert([
-        {
-          cliente_id: clienteSeleccionado,
-          total: Number(montoTotal),
-          estado: "reserva",
-        },
-      ])
-      .select("*, cliente:cliente_id(*)")
-      .single();
-
-    if (error) {
-      toast.error("No se pudo registrar la venta.");
-      setGuardando(false);
-      return;
-    }
-
-    toast.success("¡Venta registrada!");
-    if (onNuevaVenta) onNuevaVenta(data);
-    setClienteSeleccionado("");
-    setMontoTotal("");
-    setOpen(false);
     setGuardando(false);
+    if (success) {
+      setOpen(false);
+      // Reset form
+      setClienteId("");
+      setTotal("");
+      setEstado("reserva");
+    }
   };
 
   return (
@@ -93,47 +91,59 @@ export const NuevaVentaModal: React.FC<NuevaVentaModalProps> = ({
           Nueva Venta
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>Registrar Nueva Venta</DialogTitle>
+          <DialogTitle>Nueva Venta</DialogTitle>
           <DialogDescription>
-            Completa los datos mínimos para agregar una nueva venta.
+            Registra una nueva venta en el sistema.
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleGuardar} className="space-y-4">
           <div>
-            <Label htmlFor="clienteSelect">Cliente</Label>
-            <select
-              id="clienteSelect"
-              value={clienteSeleccionado}
-              onChange={e => setClienteSeleccionado(e.target.value)}
-              className="w-full border rounded px-3 py-2 bg-white"
-              required
-              disabled={loadingClientes}
-            >
-              <option value="">
-                {loadingClientes ? "Cargando clientes..." : "Seleccione un cliente"}
-              </option>
-              {clientes.map(cliente => (
-                <option key={cliente.id} value={cliente.id}>
-                  {cliente.nombre_completo}
-                </option>
-              ))}
-            </select>
+            <Label htmlFor="cliente">Cliente (Opcional)</Label>
+            <Select value={clienteId} onValueChange={setClienteId}>
+              <SelectTrigger>
+                <SelectValue placeholder="Seleccionar cliente" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="">Sin cliente específico</SelectItem>
+                {clientes.map((cliente) => (
+                  <SelectItem key={cliente.id} value={cliente.id}>
+                    {cliente.nombre_completo}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
+
           <div>
-            <Label htmlFor="montoTotal">Monto Total (Bs)</Label>
+            <Label htmlFor="total">Total (Bs) *</Label>
             <Input
-              id="montoTotal"
+              id="total"
               type="number"
-              min="0"
               step="0.01"
-              value={montoTotal}
-              onChange={e => setMontoTotal(e.target.value)}
-              placeholder="Ej. 150.00"
+              min="0"
+              value={total}
+              onChange={e => setTotal(e.target.value)}
+              placeholder="Ej. 150.50"
               required
             />
           </div>
+
+          <div>
+            <Label htmlFor="estado">Estado *</Label>
+            <Select value={estado} onValueChange={(value: EstadoVenta) => setEstado(value)}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="reserva">Reserva</SelectItem>
+                <SelectItem value="espera">En Espera</SelectItem>
+                <SelectItem value="realizado">Realizado</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
           <DialogFooter className="pt-4">
             <DialogClose asChild>
               <Button type="button" variant="outline" disabled={guardando}>
@@ -141,7 +151,7 @@ export const NuevaVentaModal: React.FC<NuevaVentaModalProps> = ({
               </Button>
             </DialogClose>
             <Button type="submit" disabled={guardando}>
-              {guardando ? "Guardando..." : "Guardar Venta"}
+              {guardando ? "Guardando..." : "Crear Venta"}
             </Button>
           </DialogFooter>
         </form>
