@@ -14,8 +14,8 @@ import Configuracion from "./pages/Configuracion";
 import MovimientosStock from "./pages/MovimientosStock";
 import Reportes from "./pages/Reportes";
 import NotFound from "./pages/NotFound";
-import { CatalogoPage } from "./pages/CatalogoPage";
-import { CategoriasPage } from "./pages/CategoriasPage";
+import CatalogoPage from "./pages/CatalogoPage";
+import CategoriasPage from "./pages/CategoriasPage";
 
 const queryClient = new QueryClient();
 
