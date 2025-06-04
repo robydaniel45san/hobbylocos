@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   Table, 
   TableHeader, 
@@ -10,17 +10,51 @@ import {
 } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Plus, Search, Users } from 'lucide-react';
+import { Plus, Search, Users, Edit, Trash2 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { useClientes } from '@/hooks/useClientes';
+import { NuevoClienteModal } from '@/components/clientes/NuevoClienteModal';
+import { EditarClienteModal } from '@/components/clientes/EditarClienteModal';
+import { Cliente } from '@/types';
 
 const Clientes = () => {
   const { 
     filtro, 
     setFiltro, 
     clientesFiltrados,
-    loading 
+    eliminarCliente,
+    actualizarCliente,
+    fetchClientes,
+    loading,
+    error
   } = useClientes();
+
+  const [modalNuevoAbierto, setModalNuevoAbierto] = useState(false);
+  const [modalEditarAbierto, setModalEditarAbierto] = useState(false);
+  const [clienteSeleccionado, setClienteSeleccionado] = useState<Cliente | null>(null);
+
+  const handleEliminar = async (cliente: Cliente) => {
+    const success = await eliminarCliente(cliente.id);
+    if (!success) {
+      console.error('No se pudo eliminar el cliente');
+    }
+  };
+
+  const handleEditar = (cliente: Cliente) => {
+    setClienteSeleccionado(cliente);
+    setModalEditarAbierto(true);
+  };
 
   return (
     <div className="space-y-6">
@@ -31,7 +65,7 @@ const Clientes = () => {
             Administra tu cartera de clientes
           </p>
         </div>
-        <Button>
+        <Button onClick={() => setModalNuevoAbierto(true)}>
           <Plus className="h-4 w-4 mr-1" />
           Nuevo Cliente
         </Button>
@@ -59,6 +93,13 @@ const Clientes = () => {
           </CardContent>
         </Card>
       </div>
+
+      {error && (
+        <div className="bg-destructive/15 text-destructive px-4 py-3 rounded-md">
+          <p className="font-medium">Error al cargar clientes</p>
+          <p className="text-sm">{error}</p>
+        </div>
+      )}
 
       <div className="rounded-md border">
         <Table>
@@ -102,9 +143,36 @@ const Clientes = () => {
                     {cliente.notas || <span className="text-muted-foreground">-</span>}
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button size="sm" variant="ghost">
-                      Editar
-                    </Button>
+                    <div className="flex justify-end gap-2">
+                      <Button 
+                        size="sm" 
+                        variant="ghost"
+                        onClick={() => handleEditar(cliente)}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button size="sm" variant="ghost">
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>¿Eliminar cliente?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Esta acción no se puede deshacer. Se eliminará permanentemente al cliente "{cliente.nombre_completo}".
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                            <AlertDialogAction onClick={() => handleEliminar(cliente)}>
+                              Eliminar
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))
@@ -118,6 +186,19 @@ const Clientes = () => {
           </TableBody>
         </Table>
       </div>
+
+      <NuevoClienteModal
+        open={modalNuevoAbierto}
+        setOpen={setModalNuevoAbierto}
+        onClienteCreado={fetchClientes}
+      />
+
+      <EditarClienteModal
+        open={modalEditarAbierto}
+        setOpen={setModalEditarAbierto}
+        cliente={clienteSeleccionado}
+        onClienteActualizado={actualizarCliente}
+      />
     </div>
   );
 };

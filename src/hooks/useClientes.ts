@@ -1,96 +1,128 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Cliente } from '@/types';
+import { toast } from '@/hooks/use-toast';
 
 export const useClientes = () => {
   const [filtro, setFiltro] = useState<string>('');
   const [clientes, setClientes] = useState<Cliente[]>([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  // Esta función quedará comentada hasta que se cree la tabla en Supabase
+  // Obtiene clientes desde Supabase
   const fetchClientes = useCallback(async () => {
     setLoading(true);
+    setError(null);
     try {
-      // Comentamos este código hasta que se cree la tabla en Supabase
-      // const { supabase } = await import("@/integrations/supabase/client");
-      // const { data, error } = await supabase
-      //   .from("clientes")
-      //   .select("*")
-      //   .order("created_at", { ascending: false });
-      
-      // if (error) {
-      //   console.error("Error al cargar clientes:", error);
-      // } else if (data) {
-      //   setClientes(data);
-      // }
-      console.log("Función fetchClientes preparada para cuando exista la tabla en Supabase");
+      const { supabase } = await import("@/integrations/supabase/client");
+      const { data, error } = await supabase
+        .from("clientes")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.error("Error al cargar clientes:", error);
+        setError("Error al cargar clientes");
+        toast({
+          title: "Error",
+          description: "No se pudieron cargar los clientes",
+          variant: "destructive",
+        });
+      } else if (data) {
+        setClientes(data);
+      }
     } catch (err) {
       console.error("Error inesperado al cargar clientes:", err);
+      setError("Error inesperado");
+      toast({
+        title: "Error inesperado",
+        description: "Ocurrió un error al cargar los clientes",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
   }, []);
 
-  // Carga datos de demostración para desarrollo hasta tener la tabla en Supabase
-  useEffect(() => {
-    // Datos de ejemplo de clientes bolivianos
-    const clientesDemoData: Cliente[] = [
-      {
-        id: '1',
-        nombre_completo: 'María Quispe Mamani',
-        celular: '71234567',
-        correo: 'maria@example.com',
-        direccion: 'Av. 16 de Julio #123',
-        departamento: 'La Paz',
-        provincia: 'Murillo',
-        notas: 'Cliente habitual'
-      },
-      {
-        id: '2',
-        nombre_completo: 'Juan Condori Huanca',
-        celular: '73456789',
-        correo: 'juan@example.com',
-        direccion: 'Calle Sagárnaga #456',
-        departamento: 'Cochabamba',
-        provincia: 'Cercado',
-        notas: null
-      },
-      {
-        id: '3',
-        nombre_completo: 'Ana Flores Choque',
-        celular: '65432198',
-        correo: 'ana@example.com',
-        direccion: 'Av. América #789',
-        departamento: 'Santa Cruz',
-        provincia: 'Andrés Ibáñez',
-        notas: 'Prefiere entregas por la tarde'
-      },
-      {
-        id: '4',
-        nombre_completo: 'Pedro Torrico Ledezma',
-        celular: '76543219',
-        correo: 'pedro@example.com',
-        direccion: 'Calle Sucre #101',
-        departamento: 'Tarija',
-        provincia: 'Cercado',
-        notas: null
-      },
-      {
-        id: '5',
-        nombre_completo: 'Luisa Vargas Camacho',
-        celular: '60123456',
-        correo: 'luisa@example.com',
-        direccion: 'Av. Villazón #202',
-        departamento: 'Potosí',
-        provincia: 'Tomás Frías',
-        notas: 'Cliente VIP'
-      },
-    ];
-    setClientes(clientesDemoData);
-    
-    // Si existe la tabla en Supabase, podemos usar fetchClientes
-    // fetchClientes();
+  // Eliminar cliente
+  const eliminarCliente = useCallback(async (id: string) => {
+    try {
+      const { supabase } = await import("@/integrations/supabase/client");
+      const { error } = await supabase
+        .from("clientes")
+        .delete()
+        .eq("id", id);
+
+      if (error) {
+        console.error("Error al eliminar cliente:", error);
+        toast({
+          title: "Error",
+          description: "No se pudo eliminar el cliente",
+          variant: "destructive",
+        });
+        return false;
+      } else {
+        // Actualizar el estado local
+        setClientes(prev => prev.filter(c => c.id !== id));
+        toast({
+          title: "Cliente eliminado",
+          description: "El cliente se eliminó correctamente",
+        });
+        return true;
+      }
+    } catch (err) {
+      console.error("Error inesperado al eliminar cliente:", err);
+      toast({
+        title: "Error inesperado",
+        description: "Ocurrió un error al eliminar el cliente",
+        variant: "destructive",
+      });
+      return false;
+    }
   }, []);
+
+  // Actualizar cliente
+  const actualizarCliente = useCallback(async (id: string, datosActualizados: Partial<Cliente>) => {
+    try {
+      const { supabase } = await import("@/integrations/supabase/client");
+      const { data, error } = await supabase
+        .from("clientes")
+        .update(datosActualizados)
+        .eq("id", id)
+        .select()
+        .single();
+
+      if (error) {
+        console.error("Error al actualizar cliente:", error);
+        toast({
+          title: "Error",
+          description: "No se pudo actualizar el cliente",
+          variant: "destructive",
+        });
+        return false;
+      } else if (data) {
+        // Actualizar el estado local
+        setClientes(prev => prev.map(c => c.id === id ? data : c));
+        toast({
+          title: "Cliente actualizado",
+          description: "El cliente se actualizó correctamente",
+        });
+        return true;
+      }
+    } catch (err) {
+      console.error("Error inesperado al actualizar cliente:", err);
+      toast({
+        title: "Error inesperado",
+        description: "Ocurrió un error al actualizar el cliente",
+        variant: "destructive",
+      });
+      return false;
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchClientes();
+  }, [fetchClientes]);
 
   const clientesFiltrados = clientes.filter(cliente => 
     cliente.nombre_completo.toLowerCase().includes(filtro.toLowerCase()) ||
@@ -107,6 +139,9 @@ export const useClientes = () => {
     setClientes,
     clientesFiltrados,
     fetchClientes,
-    loading
+    eliminarCliente,
+    actualizarCliente,
+    loading,
+    error
   };
 };
