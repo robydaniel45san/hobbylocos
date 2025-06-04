@@ -1,161 +1,159 @@
 
 import React, { useState } from 'react';
-import { 
-  Table, 
-  TableHeader, 
-  TableBody, 
-  TableRow, 
-  TableHead, 
-  TableCell 
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { 
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { Edit, Trash2 } from 'lucide-react';
-import { Producto } from '@/types';
-import { ProductoStockBadge } from './ProductoStockBadge';
+import { Card, CardContent } from '@/components/ui/card';
+import { Pencil, Trash2, Eye, Package, AlertTriangle, CheckCircle } from 'lucide-react';
 import { EditarProductoModal } from './EditarProductoModal';
+import { Producto } from '@/types';
 
 interface ProductosTableProps {
   productos: Producto[];
-  onEliminarProducto: (id: string) => Promise<boolean>;
-  onActualizarProducto: (id: string, datos: Partial<Producto>) => Promise<boolean>;
-  loading?: boolean;
+  onEliminarProducto: (id: string) => void;
+  onActualizarProducto: (producto: Producto) => void;
+  loading: boolean;
 }
 
-export const ProductosTable: React.FC<ProductosTableProps> = ({ 
-  productos, 
+export const ProductosTable: React.FC<ProductosTableProps> = ({
+  productos,
   onEliminarProducto,
   onActualizarProducto,
-  loading = false 
+  loading
 }) => {
-  const [productoAEliminar, setProductoAEliminar] = useState<Producto | null>(null);
-  const [productoAEditar, setProductoAEditar] = useState<Producto | null>(null);
-  const [modalEditarAbierto, setModalEditarAbierto] = useState(false);
+  const [editandoProducto, setEditandoProducto] = useState<Producto | null>(null);
 
-  const handleEliminar = async () => {
-    if (productoAEliminar) {
-      await onEliminarProducto(productoAEliminar.id);
-      setProductoAEliminar(null);
+  const getStockBadge = (stock: number) => {
+    if (stock === 0) {
+      return (
+        <Badge variant="destructive" className="flex items-center gap-1">
+          <AlertTriangle className="h-3 w-3" />
+          Sin stock
+        </Badge>
+      );
+    } else if (stock <= 5) {
+      return (
+        <Badge variant="secondary" className="bg-yellow-100 text-yellow-800 flex items-center gap-1">
+          <Package className="h-3 w-3" />
+          Stock bajo
+        </Badge>
+      );
+    } else {
+      return (
+        <Badge variant="default" className="bg-green-100 text-green-800 flex items-center gap-1">
+          <CheckCircle className="h-3 w-3" />
+          En stock
+        </Badge>
+      );
     }
-  };
-
-  const handleEditar = (producto: Producto) => {
-    setProductoAEditar(producto);
-    setModalEditarAbierto(true);
   };
 
   if (loading) {
     return (
-      <div className="rounded-md border">
-        <div className="p-8 text-center">
-          <p className="text-muted-foreground">Cargando productos...</p>
-        </div>
-      </div>
+      <Card className="glass-effect border-0">
+        <CardContent className="p-8">
+          <div className="flex items-center justify-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
+            <span className="ml-3 text-muted-foreground">Cargando productos...</span>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (productos.length === 0) {
+    return (
+      <Card className="glass-effect border-0">
+        <CardContent className="p-12 text-center">
+          <Package className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+          <h3 className="text-lg font-semibold text-muted-foreground mb-2">No hay productos</h3>
+          <p className="text-muted-foreground">Agrega tu primer producto para comenzar</p>
+        </CardContent>
+      </Card>
     );
   }
 
   return (
     <>
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Nombre</TableHead>
-              <TableHead>Categoría</TableHead>
-              <TableHead>Stock</TableHead>
-              <TableHead>Precio Minorista (Bs)</TableHead>
-              <TableHead>Precio Mayorista (Bs)</TableHead>
-              <TableHead>Estado</TableHead>
-              <TableHead className="text-right">Acciones</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {productos.length > 0 ? (
-              productos.map((producto) => (
-                <TableRow key={producto.id}>
-                  <TableCell className="font-medium">{producto.nombre}</TableCell>
-                  <TableCell>{producto.categoria || '-'}</TableCell>
-                  <TableCell>
-                    <ProductoStockBadge stock={producto.stock} />
+      <Card className="glass-effect border-0 overflow-hidden">
+        <CardContent className="p-0">
+          <Table>
+            <TableHeader>
+              <TableRow className="border-b border-gray-100">
+                <TableHead className="font-semibold text-gray-700 py-4 px-6">Producto</TableHead>
+                <TableHead className="font-semibold text-gray-700">Categoría</TableHead>
+                <TableHead className="font-semibold text-gray-700">Stock</TableHead>
+                <TableHead className="font-semibold text-gray-700">Estado</TableHead>
+                <TableHead className="font-semibold text-gray-700">Precio Minorista</TableHead>
+                <TableHead className="font-semibold text-gray-700">Precio Mayorista</TableHead>
+                <TableHead className="font-semibold text-gray-700 text-right">Acciones</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {productos.map((producto) => (
+                <TableRow key={producto.id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
+                  <TableCell className="py-4 px-6">
+                    <div className="font-semibold text-gray-900">{producto.nombre}</div>
                   </TableCell>
                   <TableCell>
-                    Bs {producto.precio_minorista.toFixed(2)}
-                  </TableCell>
-                  <TableCell>
-                    Bs {producto.precio_mayorista.toFixed(2)}
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant={producto.activo ? "outline" : "secondary"}>
-                      {producto.activo ? 'Activo' : 'Inactivo'}
+                    <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
+                      {producto.categoria}
                     </Badge>
                   </TableCell>
+                  <TableCell>
+                    <span className="font-semibold text-lg">{producto.stock}</span>
+                  </TableCell>
+                  <TableCell>
+                    {getStockBadge(producto.stock)}
+                  </TableCell>
+                  <TableCell>
+                    <span className="font-semibold text-green-600">Bs. {producto.precio_minorista}</span>
+                  </TableCell>
+                  <TableCell>
+                    <span className="font-semibold text-blue-600">Bs. {producto.precio_mayorista}</span>
+                  </TableCell>
                   <TableCell className="text-right">
-                    <div className="flex gap-2 justify-end">
-                      <Button 
-                        size="sm" 
+                    <div className="flex items-center justify-end gap-2">
+                      <Button
                         variant="ghost"
-                        onClick={() => handleEditar(producto)}
+                        size="sm"
+                        onClick={() => setEditandoProducto(producto)}
+                        className="hover:bg-blue-50 hover:text-blue-600"
                       >
-                        <Edit className="h-4 w-4" />
+                        <Pencil className="h-4 w-4" />
                       </Button>
-                      <Button 
-                        size="sm" 
+                      <Button
                         variant="ghost"
-                        onClick={() => setProductoAEliminar(producto)}
-                        className="text-destructive hover:text-destructive"
+                        size="sm"
+                        onClick={() => onEliminarProducto(producto.id)}
+                        className="hover:bg-red-50 hover:text-red-600"
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
                   </TableCell>
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={7} className="h-24 text-center">
-                  No se encontraron productos
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
 
-      {/* Modal de confirmación para eliminar */}
-      <AlertDialog open={!!productoAEliminar} onOpenChange={() => setProductoAEliminar(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>¿Eliminar producto?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Esta acción no se puede deshacer. Se eliminará permanentemente el producto "{productoAEliminar?.nombre}".
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction onClick={handleEliminar} className="bg-destructive text-destructive-foreground">
-              Eliminar
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-
-      {/* Modal de edición */}
-      <EditarProductoModal
-        open={modalEditarAbierto}
-        onOpenChange={setModalEditarAbierto}
-        producto={productoAEditar}
-        onProductoActualizado={onActualizarProducto}
-      />
+      {editandoProducto && (
+        <EditarProductoModal
+          producto={editandoProducto}
+          open={!!editandoProducto}
+          onOpenChange={(open) => !open && setEditandoProducto(null)}
+          onProductoActualizado={onActualizarProducto}
+        />
+      )}
     </>
   );
 };

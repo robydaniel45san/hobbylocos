@@ -19,6 +19,9 @@ export default {
 			}
 		},
 		extend: {
+			fontFamily: {
+				inter: ['Inter', 'sans-serif'],
+			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
@@ -63,22 +66,20 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				app: {
-					'blue': '#3b82f6',
-					'blue-light': '#60a5fa',
-					'blue-dark': '#2563eb',
-					'gray': '#64748b',
-					'gray-light': '#94a3b8',
-					'gray-dark': '#334155'
+				purple: {
+					50: '#faf5ff',
+					100: '#f3e8ff',
+					500: '#8b5cf6',
+					600: '#7c3aed',
+					700: '#6d28d9',
 				},
-				status: {
-					'reserva': '#fbbf24',
-					'espera': '#60a5fa',
-					'realizado': '#34d399',
-					'pendiente': '#d97706',
-					'enviado': '#8b5cf6',
-					'entregado': '#10b981'
-				}
+				blue: {
+					50: '#eff6ff',
+					100: '#dbeafe',
+					500: '#3b82f6',
+					600: '#2563eb',
+					700: '#1d4ed8',
+				},
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -101,11 +102,22 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'fade-in': {
+					'0%': {
+						opacity: '0',
+						transform: 'translateY(10px)'
+					},
+					'100%': {
+						opacity: '1',
+						transform: 'translateY(0)'
+					}
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'fade-in': 'fade-in 0.5s ease-out'
 			}
 		}
 	},
