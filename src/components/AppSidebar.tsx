@@ -7,7 +7,11 @@ import {
   Users, 
   FileText, 
   Settings,
-  Truck
+  Truck,
+  BarChart3,
+  Archive,
+  Tags,
+  Store
 } from 'lucide-react';
 import {
   Sidebar,
@@ -26,9 +30,13 @@ export function AppSidebar() {
   const menuItems = [
     { title: 'Dashboard', path: '/', icon: LayoutDashboard },
     { title: 'Productos', path: '/productos', icon: Package },
+    { title: 'Categorías', path: '/categorias', icon: Tags },
     { title: 'Clientes', path: '/clientes', icon: Users },
     { title: 'Ventas', path: '/ventas', icon: FileText },
     { title: 'Envíos', path: '/envios', icon: Truck },
+    { title: 'Stock', path: '/stock', icon: Archive },
+    { title: 'Reportes', path: '/reportes', icon: BarChart3 },
+    { title: 'Catálogo', path: '/catalogo', icon: Store },
     { title: 'Configuración', path: '/configuracion', icon: Settings },
   ];
 
@@ -36,7 +44,6 @@ export function AppSidebar() {
     <Sidebar>
       <SidebarHeader className="p-4">
         <div className="flex items-center">
-          {/* Cambiamos logo y nombre */}
           <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#9b87f5] to-[#F97316] flex items-center justify-center text-white font-bold text-xl shadow-lg">
             HS
           </div>
@@ -78,4 +85,3 @@ export function AppSidebar() {
     </Sidebar>
   );
 }
-

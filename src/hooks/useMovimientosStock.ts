@@ -117,7 +117,7 @@ export const useMovimientosStock = () => {
         const { data: productos } = await supabase
           .from("productos")
           .select("id, nombre, stock")
-          .in("id", productosIds);
+          .in("id", productosIds as string[]); // Fix: Cast to string array
 
         const movimientosConProductos = movimientosGuardados.map((mov: MovimientoStock) => ({
           ...mov,
