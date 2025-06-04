@@ -61,7 +61,7 @@ export const NuevoEnvioModal: React.FC<NuevoEnvioModalProps> = ({
     if (error) {
       toast({ title: "No se pudo crear el envío", description: error.message, variant: "destructive" });
     } else {
-      toast({ title: "Envío creado exitosamente", variant: "success" });
+      toast({ title: "Envío creado exitosamente" });
       setOpen(false);
       if (onEnvioCreado) onEnvioCreado();
       // Reset form
