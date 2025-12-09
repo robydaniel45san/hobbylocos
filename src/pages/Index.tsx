@@ -169,6 +169,42 @@ const Index = () => {
       <section className="glass-card rounded-2xl p-6 space-y-6">
         <div className="flex items-center justify-between">
           <div>
+            <h2 className="text-xl font-semibold">Levanta el proyecto desde aquí</h2>
+            <p className="text-sm text-muted-foreground">Pasos rápidos para ver la app y validar Supabase en este entorno.</p>
+          </div>
+        </div>
+        <Separator />
+        <div className="grid gap-4 md:grid-cols-3">
+          {[ 
+            {
+              title: '1. Instala dependencias',
+              description: 'Ejecuta "npm install" en la raíz del repo para bajar paquetes.',
+            },
+            {
+              title: '2. Arranca el servidor',
+              description: 'Corre "npm run dev -- --host 0.0.0.0 --port 4173" y abre el puerto 4173.',
+            },
+            {
+              title: '3. Verifica Supabase',
+              description: 'La landing mostrará métricas reales o demo; si ves ceros revisa tus claves públicas.',
+            },
+          ].map((step) => (
+            <Card key={step.title} className="h-full">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <CheckCircle2 className="h-4 w-4 text-app-blue" />
+                  {step.title}
+                </CardTitle>
+                <CardDescription>{step.description}</CardDescription>
+              </CardHeader>
+            </Card>
+          ))}
+        </div>
+      </section>
+
+      <section className="glass-card rounded-2xl p-6 space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
             <h2 className="text-xl font-semibold">Rutas clave del proyecto</h2>
             <p className="text-sm text-muted-foreground">Accesos directos para validar cada módulo funcional.</p>
           </div>
